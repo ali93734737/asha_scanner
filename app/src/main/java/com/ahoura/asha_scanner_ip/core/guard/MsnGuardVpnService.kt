@@ -3439,6 +3439,12 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
             ?.takeIf { it >= 0 }
         val start = when {
             !auto -> 0
+            // The preference is an index into the current ladder, not a stale
+            // absolute position. Start with the last transport that actually
+            // carried traffic; falling back to the plain hint preserves the
+            // fast first-connect path on a fresh chain.
+            chainMemory in ladder.indices -> chainMemory
+            plainHint != null -> plainHint
             else -> 0
         }
 
