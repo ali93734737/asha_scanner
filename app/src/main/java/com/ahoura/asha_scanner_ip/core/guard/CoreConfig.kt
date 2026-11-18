@@ -247,6 +247,19 @@ object CoreConfig {
         }.getOrDefault(emptyList())
     }
 
+    /** Forget a peer after a definitive HTTP/2 rejection or verification timeout. */
+    fun forgetCleanH2Peer(context: Context, rejected: String) {
+        val target = formatPeerForProtocol(rejected.trim(), "masque") ?: return
+        val remaining = cleanH2Peers(context).filterNot {
+            formatPeerForProtocol(it, "masque") == target
+        }
+        syncCleanH2Peers(context, remaining)
+        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        if (formatPeerForProtocol(prefs.getString("clean_h2_peer", "").orEmpty(), "masque") == target) {
+            prefs.edit().remove("clean_h2_peer").apply()
+        }
+    }
+
     fun json(context: Context, protocol: String? = null, cleanIpOverride: String? = null): String =
         json(context, protocol, listenOverride = null, socksProxyForCore = "", cleanIpOverride = cleanIpOverride)
 

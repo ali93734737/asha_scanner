@@ -2294,6 +2294,18 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                 "log" -> {
                     val message = event.getString("message")
                     ConnectionLog.record(message)
+                    // Do not let a definitively rejected cached peer remain at the
+                    // head of the instant-connect list. Otherwise every future
+                    // connect repeats the same HTTP/2 400 / verify-timeout delay.
+                    val lowerMessage = message.lowercase()
+                    if (lowerMessage.contains("saved clean address rejected") ||
+                        lowerMessage.contains("saved clean address") && lowerMessage.contains("verify timeout")) {
+                        Regex("(?:rejected|address)\\s+([\\[][^\\]]+[\\]]|[0-9a-f:.]+(?::\\d{2,5})?)", RegexOption.IGNORE_CASE)
+                            .find(message)?.groupValues?.getOrNull(1)?.let { rejectedPeer ->
+                                CoreConfig.forgetCleanH2Peer(this@GuardVpnService, rejectedPeer)
+                                ConnectionLog.record("Removed rejected MASQUE peer from instant-connect cache: $rejectedPeer")
+                            }
+                    }
                     if (message.startsWith("Saved clean HTTP/2 address ")) {
                         val address = message.removePrefix("Saved clean HTTP/2 address ").trim().trimEnd('.')
                         if (address.isNotBlank() && CoreConfig.isWarpEndpoint(address)) {
