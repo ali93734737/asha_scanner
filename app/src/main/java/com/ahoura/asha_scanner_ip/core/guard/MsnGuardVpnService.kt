@@ -2300,7 +2300,11 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                     val lowerMessage = message.lowercase()
                     if (lowerMessage.contains("saved clean address rejected") ||
                         lowerMessage.contains("saved clean address") && lowerMessage.contains("verify timeout")) {
-                        Regex("(?:rejected|address)\\s+([\\[][^\\]]+[\\]]|[0-9a-f:.]+(?::\\d{2,5})?)", RegexOption.IGNORE_CASE)
+                        // The native log continues with the reason after the
+                        // endpoint ("...:443: other: h2 verify timeout"). Capture
+                        // only the first host:port token; the old expression could
+                        // swallow the following colon and fail normalization.
+                        Regex("rejected\\s+((?:\\[[^\\]]+\\]|[0-9]{1,3}(?:\\.[0-9]{1,3}){3})(?::\\d{2,5})?)", RegexOption.IGNORE_CASE)
                             .find(message)?.groupValues?.getOrNull(1)?.let { rejectedPeer ->
                                 CoreConfig.forgetCleanH2Peer(this@GuardVpnService, rejectedPeer)
                                 ConnectionLog.record("Removed rejected MASQUE peer from instant-connect cache: $rejectedPeer")
@@ -2309,6 +2313,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                     if (message.startsWith("Saved clean HTTP/2 address ")) {
                         val address = message.removePrefix("Saved clean HTTP/2 address ").trim().trimEnd('.')
                         if (address.isNotBlank() && CoreConfig.isWarpEndpoint(address)) {
+                            CoreConfig.clearRejectedCleanH2Peer(this@GuardVpnService, address)
                             getSharedPreferences("settings", MODE_PRIVATE).edit()
                                 .putString("clean_h2_peer", address)
                                 .apply()
@@ -3506,8 +3511,10 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
             val isManual = manualPref.isNotBlank() && CoreConfig.isWarpEndpoint(manualPref)
             val candidateClean = when {
                 isManual -> manualPref
-                cachedH2Pref.isNotBlank() && CoreConfig.isWarpEndpoint(cachedH2Pref) -> cachedH2Pref
-                cleanPref.isNotBlank() && CoreConfig.isWarpEndpoint(cleanPref) -> cleanPref
+                cachedH2Pref.isNotBlank() && CoreConfig.isWarpEndpoint(cachedH2Pref) &&
+                    !CoreConfig.isRejectedCleanH2Peer(this, cachedH2Pref) -> cachedH2Pref
+                cleanPref.isNotBlank() && CoreConfig.isWarpEndpoint(cleanPref) &&
+                    !CoreConfig.isRejectedCleanH2Peer(this, cleanPref) -> cleanPref
                 else -> "162.159.199.238:443"
             }
             val chosenEnroll = candidateClean.let { CoreConfig.formatPeerForProtocol(it, protocol) }

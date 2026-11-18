@@ -57,6 +57,7 @@ object CoreConfig {
      * evidence, which is the whole lesson of the fake-connected bugs.
      */
     const val PLAIN_WORKING_TRANSPORT_PREF = "plain_working_transport"
+    private const val REJECTED_CLEAN_H2_PREF = "rejected_clean_h2_peers"
 
     const val MIM_ARMED_PREF = "mim_armed"
     const val MIM_ARMED_DEFAULT = false
@@ -189,6 +190,7 @@ object CoreConfig {
     )
 
     fun ensureCleanH2Peers(context: Context, extraPeers: List<String> = emptyList()) {
+        val rejected = rejectedCleanH2Peers(context)
         val existing = cleanH2Peers(context).filter { isWarpEndpoint(it) }
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         val savedCleanIp = prefs.getString("clean_ip", null)?.trim()?.takeIf { isWarpEndpoint(it) }?.let { listOf(it) } ?: emptyList()
@@ -197,6 +199,7 @@ object CoreConfig {
         val all = (manual + savedH2Peer + extraPeers.filter { isWarpEndpoint(it) } + savedCleanIp + existing + DEFAULT_CLEAN_H2_PEERS)
             .filter { isWarpEndpoint(it) }
             .mapNotNull { formatPeerForProtocol(it, "masque") }
+            .filterNot { it in rejected }
             .distinct()
         syncCleanH2Peers(context, all)
     }
@@ -250,14 +253,37 @@ object CoreConfig {
     /** Forget a peer after a definitive HTTP/2 rejection or verification timeout. */
     fun forgetCleanH2Peer(context: Context, rejected: String) {
         val target = formatPeerForProtocol(rejected.trim(), "masque") ?: return
+        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val rejectedPeers = prefs.getStringSet(REJECTED_CLEAN_H2_PREF, emptySet()).orEmpty().toMutableSet()
+        rejectedPeers += target
+        prefs.edit().putStringSet(REJECTED_CLEAN_H2_PREF, rejectedPeers).apply()
         val remaining = cleanH2Peers(context).filterNot {
             formatPeerForProtocol(it, "masque") == target
         }
         syncCleanH2Peers(context, remaining)
-        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         if (formatPeerForProtocol(prefs.getString("clean_h2_peer", "").orEmpty(), "masque") == target) {
             prefs.edit().remove("clean_h2_peer").apply()
         }
+        purgeMasqueCache(context)
+    }
+
+    private fun rejectedCleanH2Peers(context: Context): Set<String> =
+        context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            .getStringSet(REJECTED_CLEAN_H2_PREF, emptySet())
+            .orEmpty()
+
+    fun isRejectedCleanH2Peer(context: Context, peer: String): Boolean {
+        val target = formatPeerForProtocol(peer.trim(), "masque") ?: return false
+        return target in rejectedCleanH2Peers(context)
+    }
+
+    fun clearRejectedCleanH2Peer(context: Context, peer: String) {
+        val target = formatPeerForProtocol(peer.trim(), "masque") ?: return
+        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val remaining = prefs.getStringSet(REJECTED_CLEAN_H2_PREF, emptySet()).orEmpty()
+            .filterNot { it == target }
+            .toSet()
+        prefs.edit().putStringSet(REJECTED_CLEAN_H2_PREF, remaining).apply()
     }
 
     fun json(context: Context, protocol: String? = null, cleanIpOverride: String? = null): String =
