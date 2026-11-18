@@ -108,7 +108,7 @@ fun AnimatedGrid(
     animated: Boolean = true,
     clock: State<Long>? = null,
 ) {
-    val localClock = rememberFrameClock(animated = animated && clock == null)
+    val localClock = rememberFrameClock(running = animated && clock == null)
     val time = (clock ?: localClock).value
     Canvas(modifier) {
         if (size.width <= 0f || size.height <= 0f) return@Canvas
@@ -146,7 +146,7 @@ fun ParticleNetwork(
     animated: Boolean = true,
     clock: State<Long>? = null,
 ) {
-    val localClock = rememberFrameClock(animated = animated && clock == null)
+    val localClock = rememberFrameClock(running = animated && clock == null)
     val time = (clock ?: localClock).value
     val nodes = remember {
         List(count) {
