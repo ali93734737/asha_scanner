@@ -190,11 +190,10 @@ fun VpnScreen(
     var checkingGeo by remember { mutableStateOf(false) }
     var geoInfo by remember { mutableStateOf<GeoInfo?>(null) }
 
-    val state by vm.state.collectAsState()
     val vpnStats by vm.vpnStats.collectAsState()
     val activeProfile by vm.activeProfile.collectAsState()
     val bypassIr by vm.vpnBypassIr.collectAsState()
-    val bestScannedIps = state.progress.best.filter { it.healthy }
+    val bestScannedIps = vm.state.collectAsState().value.progress.best.filter { it.healthy }
 
     val selectedTransport by vm.selectedTransport.collectAsState()
     val tunnelMode by vm.tunnelMode.collectAsState()
@@ -784,7 +783,7 @@ fun VpnScreen(
             // Cyber Traffic Hop-by-Hop Telemetry HUD
             CyberTrafficHopHud(
                 isConnected = vpnStats.status.isConnected,
-                carrierName = state.ispInfo.ifBlank { "Carrier" },
+                carrierName = vm.state.collectAsState().value.ispInfo.ifBlank { "Carrier" },
                 exitLocation = vpnStats.country?.let { IpFormatter.flag(it) + " " + it } ?: "🇩🇪 Germany",
                 onClick = { showLivePathDialog = true },
                 modifier = Modifier.fillMaxWidth()

@@ -92,24 +92,16 @@ private fun frac(v: Float): Float = v - floor(v)
  */
 @Composable
 fun CyberBackground(animated: Boolean = true, content: @Composable () -> Unit) {
-    // Keep one frame clock for both background layers. Previously each Canvas
-    // owned a separate clock and invalidated Compose independently every frame.
-    val frameClock = rememberFrameClock(animated)
     Box(Modifier.fillMaxSize().background(Background)) {
-        AnimatedGrid(Modifier.fillMaxSize(), animated = animated, clock = frameClock)
-        ParticleNetwork(Modifier.fillMaxSize(), animated = animated, clock = frameClock)
+        AnimatedGrid(Modifier.fillMaxSize(), animated)
+        ParticleNetwork(Modifier.fillMaxSize(), animated = animated)
         content()
     }
 }
 
 @Composable
-fun AnimatedGrid(
-    modifier: Modifier = Modifier,
-    animated: Boolean = true,
-    clock: State<Long>? = null,
-) {
-    val localClock = rememberFrameClock(running = animated && clock == null)
-    val time = (clock ?: localClock).value
+fun AnimatedGrid(modifier: Modifier = Modifier, animated: Boolean = true) {
+    val time by rememberFrameClock(animated)
     Canvas(modifier) {
         if (size.width <= 0f || size.height <= 0f) return@Canvas
         val step = 30.dp.toPx()
@@ -144,10 +136,8 @@ fun ParticleNetwork(
     count: Int = 22,
     color: Color = Accent,
     animated: Boolean = true,
-    clock: State<Long>? = null,
 ) {
-    val localClock = rememberFrameClock(running = animated && clock == null)
-    val time = (clock ?: localClock).value
+    val time by rememberFrameClock(animated)
     val nodes = remember {
         List(count) {
             val rnd = Random(it * 911L + 7)

@@ -40,14 +40,29 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: Build debug APK
+      - name: Create temporary release signing key
+        run: |
+          keytool -genkeypair -v \
+            -keystore release-key.jks \
+            -storepass manus-release \
+            -keypass manus-release \
+            -alias lollipop \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=lollipop, OU=Build, O=Manus, L=NA, ST=NA, C=US"
+
+      - name: Build optimized release APK
         uses: gradle/gradle-build-action@v3
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/release-key.jks
+          KEYSTORE_PASSWORD: manus-release
+          KEY_ALIAS: lollipop
+          KEY_PASSWORD: manus-release
         with:
-          arguments: assembleDebug --no-daemon
+          arguments: assembleRelease --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: lollipop-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: lollipop-release-apk
+          path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
