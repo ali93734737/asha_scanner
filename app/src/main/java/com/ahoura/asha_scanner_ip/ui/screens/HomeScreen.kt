@@ -114,7 +114,7 @@ fun HomeScreen(
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 GlitchText(
-                    "ASHA SCANNER",
+                    "KLMMD SCANNER",
                     color = Accent,
                     fontSize = 15.sp,
                     letterSpacing = 2.sp,
@@ -248,7 +248,7 @@ fun HomeScreen(
         }
 
         // ==========================================
-        // HERO CARD 1: ASHA SMART VPN (اتصال هوشمند آشا)
+        // HERO CARD 1: KLMMD SMART VPN
         // ==========================================
         StaggerIn(0) {
             val isConnected = vpnStats.status.isConnected

@@ -42,8 +42,8 @@ import com.ahoura.asha_scanner_ip.ui.screens.TestIpsScreen
 
 enum class Route { HOME, QUICK, CUSTOM, TEST, DISCOVER, LIVE, RESULTS, VPN, DNS, ABOUT, SPLIT_TUNNEL, SPEEDTEST }
 
-const val TELEGRAM_HANDLE = "@asha_news2"
-const val TELEGRAM_URL = "https://t.me/asha_news2"
+const val TELEGRAM_HANDLE = "@m_agheiey"
+const val TELEGRAM_URL = "https://t.me/m_agheiey"
 
 @Composable
 fun AshaApp(vm: ScanViewModel) {

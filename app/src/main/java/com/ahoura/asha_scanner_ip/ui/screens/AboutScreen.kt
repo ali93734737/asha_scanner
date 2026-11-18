@@ -71,7 +71,7 @@ fun AboutScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Spacer(Modifier.size(8.dp))
-            Text("ASHA SCANNER", color = Accent, fontFamily = ShareTechMono, fontSize = 16.sp, letterSpacing = 2.sp)
+            Text("KLMMD SCANNER", color = Accent, fontFamily = ShareTechMono, fontSize = 16.sp, letterSpacing = 2.sp)
             Pill("v${BuildConfig.VERSION_NAME} · IR-OPTIMIZED")
             Text(
                 s.aboutBlurb,
@@ -85,7 +85,7 @@ fun AboutScreen(onBack: () -> Unit) {
             DonateCard(
                 onCopy = { addr ->
                     val cm = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                    cm.setPrimaryClip(android.content.ClipData.newPlainText("asha-donation", addr))
+                    cm.setPrimaryClip(android.content.ClipData.newPlainText("klmmd-donation", addr))
                     android.widget.Toast.makeText(context, s.donateCopied, android.widget.Toast.LENGTH_SHORT).show()
                 },
             )

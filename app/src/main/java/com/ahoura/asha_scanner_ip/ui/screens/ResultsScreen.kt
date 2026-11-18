@@ -299,7 +299,7 @@ fun ResultsScreen(
                                 Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                ActionBtn("⚡ Asha PoW", Accent, Accent.copy(alpha = 0.12f), AccentBorder, Modifier.weight(1f)) {
+                                ActionBtn("⚡ KLMMD PoW", Accent, Accent.copy(alpha = 0.12f), AccentBorder, Modifier.weight(1f)) {
                                     startWarpTransport(best.ip, best.port, "pow")
                                 }
                                 ActionBtn("🚀 MASQUE", BlueC, BlueC.copy(alpha = 0.12f), BlueC.copy(alpha = 0.4f), Modifier.weight(1f)) {
@@ -964,4 +964,3 @@ private fun ActionDialogItem(
         }
     }
 }
-

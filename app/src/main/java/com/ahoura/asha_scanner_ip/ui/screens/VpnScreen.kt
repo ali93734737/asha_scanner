@@ -2493,8 +2493,8 @@ private fun humanizeConnectionError(error: String, fa: Boolean): String {
             if (fa) "خطا در اجرای فرایند Aether. لطفاً مجدداً اتصال را برقرار کنید."
             else "Aether engine process failed to start. Please try connecting again."
         lower.contains("no clean endpoint") ->
-            if (fa) "ارتباط با درگاه‌های کلودفلر به دلیل اختلال شدید اینترنت برقرار نشد. حالت Asha PoW را امتحان کنید یا مجدداً دکمه اتصال را بزنید."
-            else "Could not reach clean Cloudflare endpoints due to network censorship. Please retry or switch to Asha PoW mode."
+            if (fa) "ارتباط با درگاه‌های کلودفلر به دلیل اختلال شدید اینترنت برقرار نشد. حالت KLMMD PoW را امتحان کنید یا مجدداً دکمه اتصال را بزنید."
+            else "Could not reach clean Cloudflare endpoints due to network censorship. Please retry or switch to KLMMD PoW mode."
         lower.contains("timeout") || lower.contains("timed out") ->
             if (fa) "زمان پاسخگویی شبکه به پایان رسید. لطفاً اتصال اینترنت گوشی خود را بررسی کنید یا مجدداً تلاش کنید."
             else "Connection timed out. Please check your network or try connecting again."
@@ -2638,11 +2638,11 @@ private fun mapStepToCopy(raw: String, s: AppStrings, fa: Boolean): Pair<String,
         text.startsWith("Routing device") -> {
             s.routingDeviceTraffic to ""
         }
-        text.startsWith("Asha PoW ready") || text.startsWith("Connection established") -> {
+        text.startsWith("KLMMD PoW ready") || text.startsWith("Connection established") -> {
             s.connectionEstablished to ""
         }
-        text.startsWith("Starting Asha PoW") -> {
-            (if (fa) "راه‌اندازی Asha PoW…" else "Starting Asha PoW…") to ""
+        text.startsWith("Starting KLMMD PoW") -> {
+            (if (fa) "راه‌اندازی KLMMD PoW…" else "Starting KLMMD PoW…") to ""
         }
         text.startsWith("Tunnel did not stay up") -> {
             val addr = text.substringAfter(" on ", "")

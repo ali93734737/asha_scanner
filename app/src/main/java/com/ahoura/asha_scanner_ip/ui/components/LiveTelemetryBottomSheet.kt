@@ -305,7 +305,7 @@ fun LiveTelemetryBottomSheet(
                         CyberHaptics.click(haptic)
                         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
                         val reportBuilder = StringBuilder()
-                        reportBuilder.appendLine("=== ASHA SCANNER TELEMETRY REPORT ===")
+                        reportBuilder.appendLine("=== KLMMD SCANNER TELEMETRY REPORT ===")
                         reportBuilder.appendLine("Timestamp: $timestamp")
                         reportBuilder.appendLine("Transport: $selectedTransport")
                         reportBuilder.appendLine("Status: ${vpnStats.status}")

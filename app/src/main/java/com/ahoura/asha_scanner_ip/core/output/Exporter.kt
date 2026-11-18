@@ -61,7 +61,7 @@ object Exporter {
 
     /** Human-readable report with latency / speed / colo per IP. */
     fun report(results: List<ScanResult>): String = buildString {
-        appendLine("# Asha Scanner — clean Cloudflare IPs")
+        appendLine("# KLMMD Scanner — clean Cloudflare IPs")
         appendLine("# endpoint, avg_latency_ms, speed_mbps, colo, loss%")
         results.forEach { r ->
             appendLine(

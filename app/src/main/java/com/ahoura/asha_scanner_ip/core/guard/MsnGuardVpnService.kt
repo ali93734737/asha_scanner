@@ -1098,7 +1098,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
             val address = Tun2SocksManager.selectPrivateAddress()
             ConnectionLog.record("Chain: establishing VPN interface now that tunnel is connected")
             tun = Builder()
-                .setSession("Asha Guard")
+                .setSession("KLMMD Guard")
                 .setMtu(Tun2SocksManager.VPN_INTERFACE_MTU)
                 .addAddress(address.ipAddress, address.prefixLength)
                 .addRoute("0.0.0.0", 0)
@@ -1126,8 +1126,8 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
         psiphonVpnActivated = true
         ConnectionLog.record("Whole-device routing active via tun2socks → $socksProxy")
         connected.set(true)
-        ConnectionStepsStore.update(ConnectionPhase.CONNECTED, 100, "Asha PoW ready")
-        ConnectionStepsStore.note("Asha PoW ready")
+        ConnectionStepsStore.update(ConnectionPhase.CONNECTED, 100, "KLMMD PoW ready")
+        ConnectionStepsStore.note("KLMMD PoW ready")
         // Replace the placeholder "Connecting..." notification immediately. It used
         // to be overwritten by the first traffic sample from the Rust core; with
         // tun2socks the first sample can be seconds away, so the notification
@@ -2362,7 +2362,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
         armRegionPhase()
 
         ConnectionStepsStore.reset()
-        ConnectionStepsStore.update(ConnectionPhase.STARTING, progressPercent = 10, detail = "Starting Asha PoW…")
+        ConnectionStepsStore.update(ConnectionPhase.STARTING, progressPercent = 10, detail = "Starting KLMMD PoW…")
 
         try {
             worker.execute {
@@ -2486,7 +2486,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                 val address = Tun2SocksManager.selectPrivateAddress()
                 ConnectionLog.record("Tor: creating TUN")
                 tun = Builder()
-                    .setSession("Asha Guard")
+                    .setSession("KLMMD Guard")
                     .setMtu(Tun2SocksManager.VPN_INTERFACE_MTU)
                     .addAddress(address.ipAddress, address.prefixLength)
                     .addRoute("0.0.0.0", 0)
@@ -2622,7 +2622,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                 val address = Tun2SocksManager.selectPrivateAddress()
                 ConnectionLog.record("SHARD: creating TUN before xray starts")
                 tun = Builder()
-                    .setSession("Asha Guard")
+                    .setSession("KLMMD Guard")
                     .setMtu(Tun2SocksManager.SHARD_TUNNEL_MTU)
                     .addAddress(address.ipAddress, address.prefixLength)
                     .addRoute("0.0.0.0", 0)
@@ -3934,7 +3934,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
 
                     ConnectionLog.record("Creating TUN interface BEFORE Psiphon starts")
                     tun = Builder()
-                        .setSession("Asha Guard")
+                        .setSession("KLMMD Guard")
                         .setMtu(Tun2SocksManager.VPN_INTERFACE_MTU)
                         .addAddress(address.ipAddress, address.prefixLength)
                         .addRoute("0.0.0.0", 0)
@@ -4322,7 +4322,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                 ConnectionLog.record("MTU: $warpMtu for $currentProtocol")
                 val establishedTun = runCatching {
                     Builder()
-                        .setSession("Asha Guard")
+                        .setSession("KLMMD Guard")
                         .setMtu(warpMtu)
                         // applyTunnelAddresses replaces the hardcoded /32 + /128
                         // pair: v0.8.0 identities can carry a real prefix length,
@@ -4701,7 +4701,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
         try {
             tun?.close()
             tun = Builder()
-                .setSession("Asha Guard — Kill Switch")
+                .setSession("KLMMD Guard — Kill Switch")
                 .setMtu(1280)
                 .addAddress("100.64.0.1", 32)
                 .addRoute("0.0.0.0", 0)
@@ -5301,7 +5301,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
                 appBadge()?.let { setLargeIcon(it) }
             }
             // Tints the small icon and the header text in the app's own accent,
-            // which is what makes the row read as Asha Guard's at a glance.
+            // which is what makes the row read as KLMMD Guard's at a glance.
             .setColor(NOTIFICATION_ACCENT)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
@@ -5409,7 +5409,7 @@ open class GuardVpnService : VpnService(), NativeCore.CoreCallback, PsiphonTunne
             }
             canvas.clipPath(clip)
 
-            val d = getDrawable(R.drawable.app_icon_asha)
+            val d = getDrawable(R.drawable.app_icon_lollipop)
             d?.apply {
                 setBounds(0, 0, size, size)
                 draw(canvas)

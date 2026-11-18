@@ -554,7 +554,7 @@ class AshaVpnService : GuardVpnService() {
 
                 // Establish TUN interface
                 val builder = Builder()
-                    .setSession("Asha VPN - $profileName")
+                    .setSession("KLMMD VPN - $profileName")
                     .setMtu(Tun2SocksManager.VPN_INTERFACE_MTU)
 
                 val privateAddr = Tun2SocksManager.selectPrivateAddress()
@@ -904,7 +904,7 @@ class AshaVpnService : GuardVpnService() {
 
                 val privateAddr = Tun2SocksManager.selectPrivateAddress()
                 val builder = Builder()
-                    .setSession("Asha VPN - $profileName")
+                    .setSession("KLMMD VPN - $profileName")
                     .setMtu(Tun2SocksManager.VPN_INTERFACE_MTU)
 
                 builder.addAddress(privateAddr.ipAddress, privateAddr.prefixLength)
